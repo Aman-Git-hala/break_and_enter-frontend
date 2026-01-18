@@ -310,6 +310,7 @@
 
 import React, { useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
+import { useNavigate } from "react-router-dom";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -358,7 +359,7 @@ const evidenceColor = (evidence) => {
 
 export default function PlatformAnalysis({ platform, analysis }) {
   const [selectedSkill, setSelectedSkill] = useState(null);
-
+  const navigate = useNavigate();
   if (!analysis) return <p className="text-white p-10">No data available</p>;
 
   const skills = Object.keys(analysis);
@@ -385,7 +386,20 @@ export default function PlatformAnalysis({ platform, analysis }) {
   return (
     <div className="min-h-screen bg-slate-900 text-white p-6">
 
-      <h2 className="text-3xl font-bold mb-6">{platform} Platform Analysis</h2>
+      {/* <h2 className="text-3xl font-bold mb-6">{platform} Platform Analysis</h2> */}
+      <div className="w-full flex items-center justify-between mb-6">
+  <h2 className="text-3xl font-bold">
+    {platform} Platform Analysis
+  </h2>
+
+  <button
+    onClick={() => navigate("/dashboard")}
+    className="bg-white text-purple-700 font-semibold px-6 py-3 rounded-full hover:scale-105 transition flex items-center gap-2"
+  >
+    🏠 Home
+  </button>
+</div>
+
 
       {/* Skill cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
@@ -403,6 +417,7 @@ export default function PlatformAnalysis({ platform, analysis }) {
                 {(analysis[skill].semantic_similarity.score * 100).toFixed(0)}%
               </p>
               <p className="text-sm opacity-80">Evidence: {ev}</p>
+              <p className="">Click here to get detailed analysis</p>
             </div>
           );
         })}

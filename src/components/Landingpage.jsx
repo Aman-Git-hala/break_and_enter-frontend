@@ -30,8 +30,8 @@ function Landingpage() {
             We believe that your resume should reflect all the skills you have.
             
           </p>
-                                     {/* here i changed the route from /login to /dashboard */}
-          <button onClick={()=>navigate("/dashboard")} className="mt-8 bg-white text-purple-700 font-semibold px-6 py-3 rounded-full hover:scale-105 transition">
+                    {/* to bypass login and signup replace /signin with /dashboard  */}
+          <button onClick={()=>navigate("/signin")} className="mt-8 bg-white text-purple-700 font-semibold px-6 py-3 rounded-full hover:scale-105 transition">
             Get Started 
           </button>
         </div>

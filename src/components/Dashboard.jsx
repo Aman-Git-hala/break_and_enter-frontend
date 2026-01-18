@@ -556,6 +556,19 @@ export default function Dashboard({setAnalysisData, setPlatform}) {
       console.error(err);
     }
   };
+  // log out
+  const handleLogout = async () => {
+  try {
+    await fetch("http://localhost:5000/logout", {
+      credentials: "include"
+    });
+
+    navigate("/"); // or "/login" depending on your routes
+  } catch (err) {
+    console.error(err);
+    alert("Logout failed");
+  }
+};
 
   // ================= UI =================
 
@@ -575,7 +588,7 @@ export default function Dashboard({setAnalysisData, setPlatform}) {
           <History size={18} /> Previous Analysis
         </button>
 
-        <button
+        {/* <button
           onClick={() => {
             fetchProfile();
             setShowProfile(true);
@@ -583,7 +596,25 @@ export default function Dashboard({setAnalysisData, setPlatform}) {
           className="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium shadow hover:bg-gray-100 flex gap-2 items-center"
         >
           <User size={18} /> Profile
-        </button>
+        </button> */}
+        <div className="flex gap-3">
+    <button
+      onClick={() => {
+        fetchProfile();
+        setShowProfile(true);
+      }}
+      className="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium shadow hover:bg-gray-100 flex gap-2 items-center"
+    >
+      <User size={18} /> Profile
+    </button>
+
+    <button
+      onClick={handleLogout}
+      className="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium shadow hover:bg-red-600 flex gap-2 items-center"
+    >
+      Logout
+    </button>
+  </div>
       </div>
 
       {/* Main Section */}
