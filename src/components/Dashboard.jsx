@@ -55,7 +55,8 @@ export default function Dashboard({ setAnalysisData, setPlatform }) {
       setAnalysisData(data);
       setPlatform("GitHub");
 
-      navigate("/analysis");
+      // Pass profile data via state so PlatformAnalysis.jsx can read it
+      navigate("/analysis", { state: { profile: data.profile } });
 
     } catch (err) {
       clearInterval(progressInterval);
