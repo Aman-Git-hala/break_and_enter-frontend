@@ -1,525 +1,319 @@
-// // import React, { useState } from "react";
-// // import { Bar, Radar } from "react-chartjs-2";
-// // import {
-// //   Chart as ChartJS,
-// //   CategoryScale,
-// //   LinearScale,
-// //   BarElement,
-// //   RadialLinearScale,
-// //   PointElement,
-// //   LineElement,
-// //   Tooltip,
-// //   Legend
-// // } from "chart.js";
-
-// // ChartJS.register(
-// //   CategoryScale,
-// //   LinearScale,
-// //   BarElement,
-// //   RadialLinearScale,
-// //   PointElement,
-// //   LineElement,
-// //   Tooltip,
-// //   Legend
-// // );
-
-// // const levelMap = {
-// //   Low: 30,
-// //   Medium: 60,
-// //   High: 90,
-// //   Experimental: 40,
-// //   Stable: 80,
-// //   Occasional: 50,
-// //   Consistent: 85,
-// //   "One-off": 30,
-// //   Active: 90,
-// //   Stale: 40
-// // };
-
-// // export default function PlatformAnalysis({ platform, analysis }) {
-// //   const [selectedSkill, setSelectedSkill] = useState(null);
-
-// //   const skills = Object.keys(analysis);
-
-// //   const barData = {
-// //     labels: skills,
-// //     datasets: [
-// //       {
-// //         label: "Score %",
-// //         data: skills.map(s => analysis[s].semantic_similarity.score * 100),
-// //         backgroundColor: "#6366f1"
-// //       }
-// //     ]
-// //   };
-
-// //   const radarData = selectedSkill && {
-// //     labels: ["Complexity", "Maturity", "Consistency", "Recency"],
-// //     datasets: [
-// //       {
-// //         label: selectedSkill,
-// //         data: [
-// //           levelMap[analysis[selectedSkill].complexity],
-// //           levelMap[analysis[selectedSkill].project_maturity],
-// //           levelMap[analysis[selectedSkill].consistency],
-// //           levelMap[analysis[selectedSkill].recency]
-// //         ],
-// //         backgroundColor: "rgba(99,102,241,0.3)",
-// //         borderColor: "#6366f1"
-// //       }
-// //     ]
-// //   };
-
-// //   return (
-// //     <div className="min-w-full bg-slate-900 text-white p-6 rounded-xl shadow-xl">
-// //       <h2 className="text-2xl font-bold mb-4">{platform} Analysis</h2>
-
-// //       {/* Skill cards */}
-// //       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-// //         {skills.map(skill => (
-// //           <div
-// //             key={skill}
-// //             onClick={() => setSelectedSkill(skill)}
-// //             className="bg-slate-800 p-4 rounded-lg cursor-pointer hover:bg-slate-700 transition"
-// //           >
-// //             <h3 className="text-lg font-semibold">{skill}</h3>
-// //             <p className="text-indigo-400 text-xl">
-// //               {(analysis[skill].semantic_similarity.score * 100).toFixed(0)}%
-// //             </p>
-// //             <p className="text-sm text-gray-400">
-// //               {analysis[skill].semantic_similarity.evidence}
-// //             </p>
-// //           </div>
-// //         ))}
-// //       </div>
-
-// //       {/* Bar chart */}
-// //       <div className="bg-slate-800 p-4 rounded-lg">
-// //         <Bar data={barData} />
-// //       </div>
-
-// //       {/* Skill detail modal */}
-// //       {selectedSkill && (
-// //         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-// //           <div className="bg-slate-900 p-6 rounded-xl w-[90%] md:w-[600px]">
-// //             <h3 className="text-xl font-bold mb-4">
-// //               {selectedSkill} – Detailed Analysis
-// //             </h3>
-
-// //             <Radar data={radarData} />
-
-// //             <div className="mt-4 text-sm space-y-1">
-// //               <p>Complexity: {analysis[selectedSkill].complexity}</p>
-// //               <p>Maturity: {analysis[selectedSkill].project_maturity}</p>
-// //               <p>Consistency: {analysis[selectedSkill].consistency}</p>
-// //               <p>Recency: {analysis[selectedSkill].recency}</p>
-// //             </div>
-
-// //             <button
-// //               onClick={() => setSelectedSkill(null)}
-// //               className="mt-4 bg-indigo-600 px-4 py-2 rounded"
-// //             >
-// //               Close
-// //             </button>
-// //           </div>
-// //         </div>
-// //       )}
-// //     </div>
-// //   );
-// // }
-
-
-// import React, { useState } from "react";
-// import { Bar, Line } from "react-chartjs-2";
-// import {
-//   Chart as ChartJS,
-//   CategoryScale,
-//   LinearScale,
-//   BarElement,
-//   LineElement,
-//   PointElement,
-//   Tooltip,
-//   Legend
-// } from "chart.js";
-
-// ChartJS.register(
-//   CategoryScale,
-//   LinearScale,
-//   BarElement,
-//   LineElement,
-//   PointElement,
-//   Tooltip,
-//   Legend
-// );
-
-// const levelMap = {
-//   Low: 30,
-//   Medium: 60,
-//   High: 90,
-//   Experimental: 40,
-//   Stable: 85,
-//   Occasional: 55,
-//   Consistent: 85,
-//   "One-off": 30,
-//   Active: 90,
-//   Stale: 40,
-//   Dormant: 20
-// };
-
-// export default function PlatformAnalysis({ platform, analysis }) {
-//   const [selectedSkill, setSelectedSkill] = useState(null);
-
-//   const skills = Object.keys(analysis);
-
-//   // Score chart
-//   const scoreChart = {
-//     labels: skills,
-//     datasets: [
-//       {
-//         label: "Skill Score %",
-//         data: skills.map(s => analysis[s].semantic_similarity.score * 100),
-//         backgroundColor: "#6366f1"
-//       }
-//     ]
-//   };
-
-//   const buildSkillData = (skill) => {
-//     const s = analysis[skill];
-//     return [
-//       levelMap[s.complexity],
-//       levelMap[s.project_maturity],
-//       levelMap[s.consistency],
-//       levelMap[s.recency]
-//     ];
-//   };
-
-//   const paramLabels = ["Complexity", "Maturity", "Consistency", "Recency"];
-
-//   return (
-//     <div className="min-w-full bg-slate-900 text-white p-6 rounded-xl shadow-xl">
-
-//       <h2 className="text-2xl font-bold mb-6">{platform} Analysis</h2>
-
-//       {/* Skill Cards */}
-//       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-//         {skills.map(skill => (
-//           <div
-//             key={skill}
-//             onClick={() => setSelectedSkill(skill)}
-//             className="bg-slate-800 p-4 rounded-lg cursor-pointer hover:bg-slate-700 transition"
-//           >
-//             <h3 className="text-lg font-semibold">{skill}</h3>
-//             <p className="text-indigo-400 text-2xl">
-//               {(analysis[skill].semantic_similarity.score * 100).toFixed(0)}%
-//             </p>
-//             <span className="text-sm text-gray-400">
-//               {analysis[skill].semantic_similarity.evidence}
-//             </span>
-//           </div>
-//         ))}
-//       </div>
-
-//       {/* Score Comparison Chart */}
-//       <div className="bg-slate-800 p-4 rounded-lg">
-//         <Bar data={scoreChart} />
-//       </div>
-
-//       {/* Skill Modal */}
-//       {selectedSkill && (
-//         <SkillModal
-//           skill={selectedSkill}
-//           analysis={analysis[selectedSkill]}
-//           onClose={() => setSelectedSkill(null)}
-//         />
-//       )}
-//     </div>
-//   );
-// }
-
-// function SkillModal({ skill, analysis, onClose }) {
-//   const values = [
-//     levelMap[analysis.complexity],
-//     levelMap[analysis.project_maturity],
-//     levelMap[analysis.consistency],
-//     levelMap[analysis.recency]
-//   ];
-
-//   const paramChart = {
-//     labels: ["Complexity", "Maturity", "Consistency", "Recency"],
-//     datasets: [
-//       {
-//         label: skill,
-//         data: values,
-//         backgroundColor: "#22c55e"
-//       }
-//     ]
-//   };
-
-//   const trendChart = {
-//     labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
-//     datasets: [
-//       {
-//         label: "Skill Strength",
-//         data: values.map(v => Math.max(10, v - Math.random() * 20)),
-//         borderColor: "#6366f1"
-//       }
-//     ]
-//   };
-
-//   return (
-//     <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
-
-//       <div className="bg-slate-900 text-white w-[95%] md:w-[800px] p-6 rounded-xl relative">
-
-//         <button onClick={onClose} className="absolute right-4 top-4 text-xl">✖</button>
-
-//         <h3 className="text-2xl font-bold mb-4">{skill} – Full Analysis</h3>
-
-//         {/* Parameter Chart */}
-//         <div className="bg-slate-800 p-4 rounded mb-4">
-//           <Bar data={paramChart} />
-//         </div>
-
-//         {/* Trend Chart */}
-//         <div className="bg-slate-800 p-4 rounded mb-4">
-//           <Line data={trendChart} />
-//         </div>
-
-//         {/* Heatmap */}
-//         <div className="bg-slate-800 p-4 rounded">
-//           <h4 className="mb-2 font-semibold">Parameter Heatmap</h4>
-//           <div className="grid grid-cols-4 gap-2">
-//             {values.map((v, i) => (
-//               <div
-//                 key={i}
-//                 className="h-14 rounded flex items-center justify-center text-sm font-bold"
-//                 style={{
-//                   background: `rgba(99,102,241,${v / 100})`
-//                 }}
-//               >
-//                 {v}%
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-
-//       </div>
-//     </div>
-//   );
-// }
-
-
-import React, { useState } from "react";
-import { Bar, Line } from "react-chartjs-2";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Radar, Doughnut } from "react-chartjs-2";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  Tooltip,
-  Legend
+  Chart as ChartJS, CategoryScale, LinearScale, BarElement, RadialLinearScale,
+  PointElement, LineElement, ArcElement, Tooltip, Legend, Filler
 } from "chart.js";
+import {
+  ArrowLeft, CheckCircle2, Award, User, Mail, Phone, GraduationCap,
+  Linkedin, Briefcase, Loader2, Github, BrainCircuit, ShieldCheck, Lock, Code
+} from "lucide-react";
+import { API_URL } from "../config"; // <--- 1. IMPORT CONFIG
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, RadialLinearScale, PointElement, LineElement, ArcElement, Tooltip, Legend, Filler);
 
-const levelMap = {
-  Low: 30,
-  Medium: 60,
-  High: 90,
-  Experimental: 40,
-  Stable: 85,
-  Occasional: 55,
-  Consistent: 85,
-  Active: 90,
-  Stale: 40
-};
+// Animation Steps
+const STEPS = [
+  { label: "Scanning Resume Structure...", icon: <Briefcase className="text-blue-400" /> },
+  { label: "Validating GitHub Activity...", icon: <Github className="text-white" /> },
+  { label: "Computing Skill Complexity...", icon: <BrainCircuit className="text-purple-400" /> },
+  { label: "Finalizing Verification...", icon: <ShieldCheck className="text-green-400" /> }
+];
 
-const evidenceColor = (evidence) => {
-  switch (evidence?.toLowerCase()) {
-    case "weak":
-      return "border-red-500 bg-red-500/10";
-    case "moderate":
-      return "border-yellow-500 bg-yellow-500/10";
-    case "strong":
-      return "border-green-500 bg-green-500/10";
-    default:
-      return "border-slate-600 bg-slate-800";
-  }
-};
+const levelMap = { Low: 30, Medium: 60, High: 90, Experimental: 40, Stable: 85, Occasional: 55, Consistent: 85, Active: 90, Stale: 40, Dormant: 10, "One-off": 20 };
 
-export default function PlatformAnalysis({ platform, analysis }) {
-  const [selectedSkill, setSelectedSkill] = useState(null);
+export default function PlatformAnalysis() {
   const navigate = useNavigate();
-  if (!analysis) return <p className="text-white p-10">No data available</p>;
+  const location = useLocation();
+  const profile = location.state?.profile; // Get data passed from Dashboard
 
-  const skills = Object.keys(analysis);
+  const [aiResults, setAiResults] = useState(null);
+  const [loadingAI, setLoadingAI] = useState(true);
+  const [selectedSkill, setSelectedSkill] = useState(null);
+  const [showIntro, setShowIntro] = useState(true);
+  const [progressStep, setProgressStep] = useState(0);
+  const [revealContent, setRevealContent] = useState(false);
 
-  const scoreChart = {
-    labels: skills,
-    datasets: [
-      {
-        label: "Skill Score %",
-        data: skills.map(s => analysis[s].semantic_similarity.score * 100),
-        backgroundColor: skills.map(s => {
-           const ev = analysis[s].semantic_similarity.evidence?.toLowerCase();
-           if (ev === "weak") return "rgba(239,68,68,0.8)";     // red
-           if (ev === "moderate") return "rgba(234,179,8,0.8)"; // yellow
-           if (ev === "strong") return "rgba(34,197,94,0.8)";   // green
-           return "rgba(99,102,241,0.8)";
-        })
+  // 1. Redirect if no profile data (prevent crash on refresh)
+  useEffect(() => {
+    if (!profile) navigate("/dashboard");
+  }, [profile, navigate]);
 
-      }
-    ]
+  // 2. Animation Logic
+  useEffect(() => {
+    if (!profile) return;
+    const stepInterval = setInterval(() => {
+      setProgressStep(prev => (prev < STEPS.length - 1 ? prev + 1 : prev));
+    }, 1500);
+    const transitionTimeout = setTimeout(() => {
+      setShowIntro(false);
+      setTimeout(() => setRevealContent(true), 500);
+    }, 4000);
+    return () => { clearInterval(stepInterval); clearTimeout(transitionTimeout); };
+  }, [profile]);
+
+  // 3. FETCH AI ANALYSIS FROM RENDER
+  useEffect(() => {
+    if (!profile) return;
+    const fetchAI = async () => {
+      try {
+        // USE API_URL HERE
+        const res = await fetch(`${API_URL}/analyze_skills`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ github_username: profile.user, skills: profile.skills_found })
+        });
+        const data = await res.json();
+        if (res.ok) setAiResults(data.response);
+      } catch (err) { console.error("AI Fetch Error:", err); }
+      finally { setLoadingAI(false); }
+    };
+    fetchAI();
+  }, [profile]);
+
+  if (!profile) return null;
+
+  const skillsList = aiResults ? Object.keys(aiResults) : [];
+  const educationList = profile.education || [];
+  const experienceList = profile.experience || [];
+
+  // Chart Helpers
+  const getScoreLevel = (score) => {
+    const percent = score * 100;
+    if (percent > 50) return { label: "Skilled", color: "text-green-400", border: "border-green-500/50", bg: "bg-green-500/10" };
+    if (percent >= 40) return { label: "Moderate", color: "text-yellow-400", border: "border-yellow-500/50", bg: "bg-yellow-500/10" };
+    return { label: "Beginner", color: "text-red-400", border: "border-red-500/50", bg: "bg-red-500/10" };
   };
-  
+
+  const getChartData = () => {
+    if (!aiResults) return null;
+    const skilled = skillsList.filter(s => (aiResults[s].semantic_similarity.score * 100) > 50).length;
+    const moderate = skillsList.filter(s => (aiResults[s].semantic_similarity.score * 100) >= 40 && (aiResults[s].semantic_similarity.score * 100) <= 50).length;
+    const beginner = skillsList.length - skilled - moderate;
+    return {
+      labels: ["Skilled", "Moderate", "Beginner"],
+      datasets: [{
+        data: [skilled, moderate, beginner],
+        backgroundColor: ["#4ade80", "#facc15", "#f87171"],
+        borderColor: "#0f0529",
+        borderWidth: 2
+      }]
+    };
+  };
+
+  const topSkill = skillsList.length > 0
+    ? skillsList.reduce((a, b) => aiResults[a].semantic_similarity.score > aiResults[b].semantic_similarity.score ? a : b)
+    : "N/A";
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white p-6">
+    <div className="min-h-screen bg-[#0f0529] text-white p-6 bg-[url('/grid-pattern.svg')] bg-fixed overflow-x-hidden">
 
-      {/* <h2 className="text-3xl font-bold mb-6">{platform} Platform Analysis</h2> */}
-      <div className="w-full flex items-center justify-between mb-6">
-  <h2 className="text-3xl font-bold">
-    {platform} Platform Analysis
-  </h2>
+      {/* Header */}
+      <div className={`max-w-7xl mx-auto flex items-center justify-between mb-8 pb-4 border-b border-white/10 transition-opacity duration-1000 ${showIntro ? "opacity-0" : "opacity-100"}`}>
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate("/dashboard")} className="p-2 hover:bg-white/10 rounded-full transition"><ArrowLeft /></button>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">Analysis Report</h1>
+        </div>
+      </div>
 
-  <button
-    onClick={() => navigate("/dashboard")}
-    className="bg-white text-purple-700 font-semibold px-6 py-3 rounded-full hover:scale-105 transition flex items-center gap-2"
-  >
-    🏠 Home
-  </button>
-</div>
+      <div className="max-w-7xl mx-auto space-y-8 relative">
 
-
-      {/* Skill cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-        {skills.map(skill => {
-          const ev = analysis[skill].semantic_similarity.evidence;
-
-          return (
-            <div
-              key={skill}
-              onClick={() => setSelectedSkill(skill)}
-              className={`p-4 rounded-lg cursor-pointer border transition hover:scale-105 ${evidenceColor(ev)}`}
-            >
-              <h3 className="text-lg font-semibold">{skill}</h3>
-              <p className="text-2xl font-bold">
-                {(analysis[skill].semantic_similarity.score * 100).toFixed(0)}%
-              </p>
-              <p className="text-sm opacity-80">Evidence: {ev}</p>
-              <p className="">Click here to get detailed analysis</p>
+        {/* Intro Loading Card */}
+        <div className={`transition-all duration-1000 ease-in-out ${showIntro ? "fixed inset-0 z-50 flex items-center justify-center bg-[#0f0529]/95 backdrop-blur-sm" : "hidden"}`}>
+          <div className="w-full max-w-md bg-slate-900 border border-purple-500/30 rounded-2xl p-8 shadow-2xl scale-110">
+            <h3 className="text-xl font-bold mb-6 text-center text-white flex items-center justify-center gap-2">
+              <Loader2 className="animate-spin text-purple-400" /> Processing Profile
+            </h3>
+            <div className="space-y-5">
+              {STEPS.map((step, index) => {
+                const isActive = index === progressStep;
+                const isCompleted = index < progressStep;
+                return (
+                  <div key={index} className={`flex items-center gap-4 transition-all duration-500 ${isActive || isCompleted ? "opacity-100" : "opacity-30"}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center border ${isActive ? "border-purple-500 bg-purple-500/20" : isCompleted ? "border-green-500 bg-green-500/20" : "border-slate-700"}`}>
+                      {isCompleted ? <CheckCircle2 size={16} className="text-green-400" /> : isActive ? <div className="w-2 h-2 bg-purple-400 rounded-full animate-ping" /> : step.icon}
+                    </div>
+                    <p className={`text-sm ${isActive ? "text-purple-300 font-medium" : "text-gray-400"}`}>{step.label}</p>
+                  </div>
+                );
+              })}
             </div>
-          );
-        })}
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className={`space-y-8 transition-all duration-1000 ${revealContent ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
+
+          {/* Profile Section */}
+          <div className="bg-slate-900/80 border border-white/10 rounded-2xl p-6 backdrop-blur-md flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Candidate Profile</p>
+              <h2 className="text-3xl font-bold text-white mb-2">{profile.user}</h2>
+              <div className="flex flex-wrap gap-4 text-sm text-gray-300">
+                <span className="flex items-center gap-2"><Mail size={14} className="text-blue-400" /> {profile.email}</span>
+                <span className="flex items-center gap-2"><Phone size={14} className="text-green-400" /> {profile.phone}</span>
+              </div>
+            </div>
+            <div className="bg-white/5 px-6 py-3 rounded-xl border border-white/5">
+              <p className="text-xs text-gray-400 mb-1">Education</p>
+              <div className="flex items-center gap-2 font-medium text-yellow-100">
+                <GraduationCap size={18} className="text-yellow-400" />
+                {educationList[0] || "N/A"}
+              </div>
+            </div>
+          </div>
+
+          {/* Github Analysis */}
+          <div>
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2"><Github className="text-white" /> GitHub Analysis</h2>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Charts */}
+              <div className="space-y-6">
+                <div className="bg-slate-900/50 border border-white/10 p-6 rounded-2xl">
+                  <h3 className="text-lg font-semibold mb-4 text-center">Skill Distribution</h3>
+                  <div className="h-56 flex justify-center">
+                    {loadingAI ? (
+                      <div className="h-40 w-40 rounded-full border-4 border-slate-700 border-t-purple-500 animate-spin"></div>
+                    ) : aiResults ? (
+                      <Doughnut data={getChartData()} options={{ plugins: { legend: { position: 'bottom', labels: { color: 'white' } } } }} />
+                    ) : (
+                      <p className="text-gray-500 text-sm mt-10">No data available</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="bg-slate-900/50 border border-white/10 p-6 rounded-2xl">
+                  <h3 className="text-lg font-semibold mb-4">Summary</h3>
+                  {loadingAI ? <div className="space-y-3 animate-pulse"><div className="h-10 bg-slate-800 rounded"></div><div className="h-10 bg-slate-800 rounded"></div></div> : (
+                    <div className="space-y-4">
+                      <StatRow label="Top Skill" value={topSkill} icon={<Award className="text-yellow-400" />} />
+                      <StatRow label="Total Skills" value={skillsList.length} icon={<CheckCircle2 className="text-purple-400" />} />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Skill Cards */}
+              <div className="lg:col-span-2">
+                {loadingAI ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[1, 2, 3, 4].map(i => <div key={i} className="bg-slate-800/50 h-32 rounded-xl animate-pulse"></div>)}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in-up">
+                    {skillsList.map((skill) => {
+                      const data = aiResults[skill];
+                      const score = data.semantic_similarity.score;
+                      const level = getScoreLevel(score);
+                      return (
+                        <div key={skill} onClick={() => setSelectedSkill(skill)} className={`relative p-5 rounded-xl border cursor-pointer transition hover:scale-[1.02] hover:shadow-lg backdrop-blur-md ${level.border} ${level.bg}`}>
+                          <div className="flex justify-between items-start mb-2">
+                            <h3 className="text-lg font-bold">{skill}</h3>
+                            <span className={`px-2 py-1 rounded text-xs font-bold bg-black/30 ${level.color}`}>{level.label}</span>
+                          </div>
+                          <div className="flex items-end gap-2 mb-2"><span className="text-4xl font-bold">{(score * 100).toFixed(0)}%</span><span className="text-sm text-gray-400 mb-1">Confidence</span></div>
+                          <p className="text-sm text-gray-300">Evidence: <span className="text-white font-medium">{data.semantic_similarity.evidence || "None"}</span></p>
+                          <p className="text-xs text-blue-300 mt-2">Click for details →</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Integrations & Experience */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="space-y-4">
+              <div className="bg-slate-900/30 border border-white/5 rounded-xl p-6 flex flex-col items-center text-center opacity-60 hover:opacity-100 transition cursor-not-allowed">
+                <Linkedin size={40} className="text-blue-500 mb-3" />
+                <h3 className="text-lg font-bold">LinkedIn Analysis</h3>
+                <div className="mt-2 flex items-center gap-1 text-xs text-yellow-500"><Lock size={12} /> Coming Soon</div>
+              </div>
+              <div className="bg-slate-900/30 border border-white/5 rounded-xl p-6 flex flex-col items-center text-center opacity-60 hover:opacity-100 transition cursor-not-allowed">
+                <Code size={40} className="text-orange-500 mb-3" />
+                <h3 className="text-lg font-bold">LeetCode Analysis</h3>
+                <div className="mt-2 flex items-center gap-1 text-xs text-yellow-500"><Lock size={12} /> Coming Soon</div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-2 bg-slate-900/80 border border-white/10 rounded-2xl p-6 backdrop-blur-md">
+              <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-cyan-300"><Briefcase size={20} /> Professional Experience</h2>
+              {experienceList.length > 0 ? (
+                <div className="relative border-l-2 border-cyan-500/30 ml-2 space-y-8">
+                  {experienceList.map((e, i) => (
+                    <div key={i} className="ml-6 relative">
+                      <span className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-slate-900 border-2 border-cyan-500"></span>
+                      <p className="text-sm text-gray-200 bg-white/5 p-4 rounded-lg border border-white/5 shadow-sm animate-slide-in" style={{ animationDelay: `${i * 100}ms` }}>
+                        {e}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 italic text-center py-4">No experience extracted from resume.</p>
+              )}
+            </div>
+
+          </div>
+        </div>
       </div>
 
-      {/* Bar chart */}
-      <div className="bg-slate-800 p-4 rounded-lg">
-        <Bar data={scoreChart} />
-      </div>
-
-      {selectedSkill && (
-        <SkillModal
-          skill={selectedSkill}
-          data={analysis[selectedSkill]}
-          onClose={() => setSelectedSkill(null)}
-        />
+      {selectedSkill && aiResults && (
+        <SkillModal skill={selectedSkill} data={aiResults[selectedSkill]} onClose={() => setSelectedSkill(null)} />
       )}
+    </div>
+  );
+}
 
+// Helpers
+function StatRow({ label, value, icon }) {
+  return (
+    <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+      <div className="flex items-center gap-3">{icon}<span className="text-gray-300">{label}</span></div>
+      <span className="font-bold text-lg">{value}</span>
     </div>
   );
 }
 
 function SkillModal({ skill, data, onClose }) {
-  const values = [
-    levelMap[data.complexity],
-    levelMap[data.project_maturity],
-    levelMap[data.consistency],
-    levelMap[data.recency]
-  ];
-  const metricColor = (value) => {
-  if (value >= 80) return "#22c55e";   // green
-  if (value >= 50) return "#facc15";   // yellow
-  return "#ef4444";                   // red
- };
-
-  const paramChart = {
-    labels: ["Complexity", "Maturity", "Consistency", "Recency"],
-    datasets: [
-      {
-        label: skill,
-        data: values,
-        backgroundColor: values.map(v => metricColor(v))
-      }
-    ]
+  const radarData = {
+    labels: ['Complexity', 'Maturity', 'Consistency', 'Recency'],
+    datasets: [{
+      label: skill,
+      data: [levelMap[data.complexity] || 20, levelMap[data.project_maturity] || 20, levelMap[data.consistency] || 20, levelMap[data.recency] || 20],
+      backgroundColor: 'rgba(168, 85, 247, 0.4)',
+      borderColor: '#a855f7',
+      borderWidth: 2,
+      pointBackgroundColor: '#fff',
+    }]
   };
-
-
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-
-      <div className="bg-slate-900 p-6 w-[95%] md:w-225 rounded-xl relative">
-
-        <button onClick={onClose} className="absolute top-4 right-4 bg-white text-black rounded-md w-9 h-9 flex items-center justify-center hover:bg-red-500 hover:text-white transition">✖</button>
-
-        <h3 className="text-2xl font-bold mb-4">{skill} – Detailed Analysis</h3>
-
-        {/* summary text like dashboard */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-center">
-          <Stat label="Complexity" value={data.complexity} />
-          <Stat label="Maturity" value={data.project_maturity} />
-          <Stat label="Consistency" value={data.consistency} />
-          <Stat label="Recency" value={data.recency} />
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+      <div className="bg-[#1a103c] border border-purple-500/30 w-full max-w-lg rounded-2xl p-6 relative shadow-2xl">
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white">✖</button>
+        <h2 className="text-2xl font-bold mb-1">{skill}</h2>
+        <p className="text-purple-400 text-sm mb-6">Detailed Metrics Breakdown</p>
+        <div className="h-64"><Radar data={radarData} options={{ scales: { r: { angleLines: { color: 'rgba(255, 255, 255, 0.1)' }, grid: { color: 'rgba(255, 255, 255, 0.1)' }, pointLabels: { color: '#e5e7eb', font: { size: 12 } }, ticks: { display: false } } } }} /></div>
+        <div className="grid grid-cols-2 gap-3 mt-6">
+          <DetailBox label="Complexity" value={data.complexity} />
+          <DetailBox label="Maturity" value={data.project_maturity} />
+          <DetailBox label="Consistency" value={data.consistency} />
+          <DetailBox label="Recency" value={data.recency} />
         </div>
-
-        {/* <div className="grid md:grid-cols-2 gap-4">
-
-          
-
-          <div className="bg-slate-800 p-4 rounded">
-            <Line data={trendChart} />
-          </div>
-
-        </div> */}
-        <div className="bg-slate-800 p-4 rounded">
-            <Bar
-               data={paramChart}
-               options={{
-               plugins: {
-                legend: { labels: { color: "#e5e7eb" } }
-              },
-          scales: {
-            x: {
-              ticks: { color: "#93c5fd" }   // light blue
-            },
-            y: {
-            ticks: { color: "#e5e7eb" }
-            }
-          }
-  }}
-/>
-        </div>
-
       </div>
     </div>
   );
 }
 
-function Stat({ label, value }) {
+function DetailBox({ label, value }) {
   return (
-    <div className="bg-slate-800 p-3 rounded">
-      <p className="text-sm text-gray-400">{label}</p>
-      <p className="text-lg font-bold">{value}</p>
+    <div className="bg-white/5 p-2 rounded text-center border border-white/5">
+      <p className="text-xs text-gray-400 uppercase">{label}</p>
+      <p className="text-sm font-semibold">{value}</p>
     </div>
   );
 }

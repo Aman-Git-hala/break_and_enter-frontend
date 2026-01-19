@@ -1,75 +1,4 @@
-// import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { Link } from "react-router-dom";
-// function SignIn() {
-//   const navigate = useNavigate();
-//   const [form, setForm] = useState({
-//     email: "",
-//     password: "",
-//     role: "Student",
-//   });
 
-//   const handleChange = (e) => {
-//     setForm({ ...form, [e.target.name]: e.target.value });
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     console.log(form);
-//     navigate("/"); // go home after login
-//   };
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-[#0f0529] text-white">
-//       <form
-//         onSubmit={handleSubmit}
-//         className="bg-white/10 backdrop-blur-md p-8 rounded-2xl w-full max-w-md space-y-5"
-//       >
-//         <h2 className="text-2xl font-bold text-center">Go to dashboard</h2>
-
-//         <input
-//           type="email"
-//           name="email"
-//           placeholder="Email"
-//           required
-//           onChange={handleChange}
-//           className="w-full p-3 rounded bg-white/20 outline-none"
-//         />
-
-//         <input
-//           type="password"
-//           name="password"
-//           placeholder="Password"
-//           required
-//           onChange={handleChange}
-//           className="w-full p-3 rounded bg-white/20 outline-none"
-//         />
-
-//         <select
-//           name="role"
-//           onChange={handleChange}
-//           className="w-full p-3 rounded bg-white/20 text-white outline-none"
-// >
-//           <option value="user" className="text-black">Student</option>
-//           <option value="admin" className="text-black">Enterprise</option>
-//         </select>
-
-
-//         <button className="mt-8 bg-white text-purple-700 font-semibold px-6 py-3 rounded-full hover:scale-105 transition">
-//           Sign In
-//         </button>
-
-//         <p className="text-center text-grey-300 text-sm">
-//             Don't have an account ?{" "}
-//             <Link to="/SignUp" className="text-purple-400 hover:underline">Sign up</Link>
-//         </p>
-//       </form>
-      
-//     </div>
-//   );
-// }
-
-// export default SignIn;
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -155,11 +84,11 @@ function SignIn() {
 
         <div className="flex justify-center">
           <button
-          disabled={loading}
-          className="mt-8 bg-white text-purple-700 font-semibold px-6 py-3 rounded-full hover:scale-105 transition"
-        >
-          {loading ? "Signing in..." : "Sign In"}
-        </button>
+            disabled={loading}
+            className="mt-8 bg-white text-purple-700 font-semibold px-6 py-3 rounded-full hover:scale-105 transition"
+          >
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
         </div>
 
         <p className="text-center text-gray-300 text-sm">
