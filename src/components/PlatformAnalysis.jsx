@@ -59,21 +59,62 @@ export default function PlatformAnalysis() {
     if (!profile) return;
     const fetchAI = async () => {
       try {
-        setError(null); // Reset error
-        // USE API_URL HERE
-        const res = await fetch(`${API_URL}/analyze_skills`, {
+        setError(null);
+        // Direct call to AI Microservice to avoid backend timeouts
+        const AI_URL = "https://ror-12-skill-engine.hf.space/analyze/github";
+
+        const res = await fetch(AI_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ github_username: profile.user, skills: profile.skills_found })
+          body: JSON.stringify({
+            github_username: profile.user,
+            skills: profile.skills_found
+          })
         });
-        const data = await res.json();
 
-        if (!res.ok) throw new Error(data.error || "Failed to fetch analysis");
+        // CRITICAL: Parse NDJSON/Smashed JSON manually
+        const rawText = await res.text();
+        if (!rawText.trim()) throw new Error("Empty response from AI");
 
-        setAiResults(data.response);
+        // 1. Sanitize the string
+        let cleanText = rawText.replace(/\n/g, "").trim(); // Remove newlines
+        cleanText = cleanText.replace(/}{/g, "},{");      // Fix smashed objects
+
+        // 2. Wrap in brackets if missing
+        if (!cleanText.startsWith("[")) {
+          cleanText = `[${cleanText}]`;
+        }
+
+        // 3. Parse JSON Array
+        let streamData;
+        try {
+          streamData = JSON.parse(cleanText);
+        } catch (e) {
+          console.error("JSON Parse Error:", e, "Raw:", rawText);
+          throw new Error("Invalid JSON format from AI");
+        }
+
+        // 4. Transform Array -> Object Map (to match previous backend format)
+        const finalResults = {};
+        if (Array.isArray(streamData)) {
+          streamData.forEach(item => {
+            if (item.status) return; // Skip status messages
+            // Merge skill objects into final results
+            Object.assign(finalResults, item);
+          });
+        } else {
+          // Fallback if it somehow returned a single object
+          Object.assign(finalResults, streamData);
+        }
+
+        if (Object.keys(finalResults).length === 0) {
+          throw new Error("No analysis data found in response");
+        }
+
+        setAiResults(finalResults);
       } catch (err) {
         console.error("AI Fetch Error:", err);
-        setError(err.message); // Set error message for UI
+        setError(err.message);
       }
       finally { setLoadingAI(false); }
     };
