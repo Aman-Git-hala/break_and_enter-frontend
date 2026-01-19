@@ -30,6 +30,7 @@ export default function PlatformAnalysis() {
 
   const [aiResults, setAiResults] = useState(null);
   const [loadingAI, setLoadingAI] = useState(true);
+  const [error, setError] = useState(null); // New Error State
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [showIntro, setShowIntro] = useState(true);
   const [progressStep, setProgressStep] = useState(0);
@@ -58,6 +59,7 @@ export default function PlatformAnalysis() {
     if (!profile) return;
     const fetchAI = async () => {
       try {
+        setError(null); // Reset error
         // USE API_URL HERE
         const res = await fetch(`${API_URL}/analyze_skills`, {
           method: "POST",
@@ -65,8 +67,14 @@ export default function PlatformAnalysis() {
           body: JSON.stringify({ github_username: profile.user, skills: profile.skills_found })
         });
         const data = await res.json();
-        if (res.ok) setAiResults(data.response);
-      } catch (err) { console.error("AI Fetch Error:", err); }
+
+        if (!res.ok) throw new Error(data.error || "Failed to fetch analysis");
+
+        setAiResults(data.response);
+      } catch (err) {
+        console.error("AI Fetch Error:", err);
+        setError(err.message); // Set error message for UI
+      }
       finally { setLoadingAI(false); }
     };
     fetchAI();
@@ -176,6 +184,11 @@ export default function PlatformAnalysis() {
                   <div className="h-56 flex justify-center">
                     {loadingAI ? (
                       <div className="h-40 w-40 rounded-full border-4 border-slate-700 border-t-purple-500 animate-spin"></div>
+                    ) : error ? (
+                      <div className="text-center">
+                        <p className="text-red-400 font-bold mb-2">Analysis Failed</p>
+                        <p className="text-xs text-red-300 max-w-[200px]">{error}</p>
+                      </div>
                     ) : aiResults ? (
                       <Doughnut data={getChartData()} options={{ plugins: { legend: { position: 'bottom', labels: { color: 'white' } } } }} />
                     ) : (
