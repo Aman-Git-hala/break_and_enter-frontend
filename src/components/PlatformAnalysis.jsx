@@ -8,7 +8,7 @@ import {
 import {
   ArrowLeft, CheckCircle2, Award, User, Mail, Phone, GraduationCap,
   Linkedin, Briefcase, Loader2, Github, BrainCircuit, ShieldCheck, Lock, Code,
-  FileText, ChevronDown, ChevronUp, Copy
+  FileText, ChevronDown, ChevronUp, Copy, Type, Hash
 } from "lucide-react";
 import { API_URL } from "../config"; // <--- 1. IMPORT CONFIG
 
@@ -37,6 +37,10 @@ export default function PlatformAnalysis() {
   const [progressStep, setProgressStep] = useState(0);
   const [revealContent, setRevealContent] = useState(false);
   const [showResume, setShowResume] = useState(false);
+
+  // Typewriter effect state
+  const [displayedText, setDisplayedText] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
 
   // 1. Redirect if no profile data (prevent crash on refresh)
   useEffect(() => {
@@ -122,6 +126,24 @@ export default function PlatformAnalysis() {
     };
     fetchAI();
   }, [profile]);
+
+  // 4. Typewriter Effect Logic
+  useEffect(() => {
+    if (showResume && profile?.raw_text && !displayedText) {
+      setIsTyping(true);
+      let i = 0;
+      const text = profile.raw_text;
+      const interval = setInterval(() => {
+        setDisplayedText(prev => prev + text.charAt(i));
+        i++;
+        if (i >= text.length) {
+          clearInterval(interval);
+          setIsTyping(false);
+        }
+      }, 5); // Speed of typing
+      return () => clearInterval(interval);
+    }
+  }, [showResume, profile]);
 
   if (!profile) return null;
 
@@ -217,7 +239,7 @@ export default function PlatformAnalysis() {
 
 
 
-          {/* Resume Raw Text (Collapsible) */}
+          {/* Resume Raw Text (Collapsible) & Keywords */}
           {profile.raw_text && (
             <div className="bg-slate-900/50 border border-white/10 rounded-2xl overflow-hidden transition-all duration-300">
               <button
@@ -228,23 +250,48 @@ export default function PlatformAnalysis() {
                   <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400">
                     <FileText size={20} />
                   </div>
-                  <span className="font-semibold text-gray-200">Parsed Resume Content</span>
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-gray-200">Parsed Resume Content</span>
+                    <span className="text-xs text-gray-500">Click to view raw text analysis</span>
+                  </div>
                 </div>
                 {showResume ? <ChevronUp className="text-gray-400" /> : <ChevronDown className="text-gray-400" />}
               </button>
 
               {showResume && (
                 <div className="p-6 border-t border-white/10 bg-[#0a0a0a] relative group">
+
+                  {/* Keywords Cloud */}
+                  {profile.keywords && profile.keywords.length > 0 && (
+                    <div className="mb-6 pb-6 border-b border-white/10">
+                      <h4 className="text-xs font-bold text-gray-500 uppercase flex items-center gap-2 mb-3">
+                        <Hash size={12} /> Key Topics Detected
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {profile.keywords.map((kw, idx) => (
+                          <span key={idx} className="px-3 py-1 bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs rounded-full">
+                            #{kw}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <button
                     onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(profile.raw_text); }}
-                    className="absolute top-4 right-4 p-2 bg-white/10 rounded-lg hover:bg-white/20 transition opacity-0 group-hover:opacity-100"
+                    className="absolute top-4 right-4 p-2 bg-white/10 rounded-lg hover:bg-white/20 transition opacity-0 group-hover:opacity-100 z-10"
                     title="Copy Text"
                   >
                     <Copy size={16} className="text-gray-300" />
                   </button>
-                  <pre className="whitespace-pre-wrap text-sm text-green-400/80 font-mono leading-relaxed max-h-96 overflow-y-auto custom-scrollbar">
-                    {profile.raw_text}
-                  </pre>
+
+                  <div className="font-mono text-sm leading-relaxed max-h-96 overflow-y-auto custom-scrollbar relative">
+                    {/* Typewriter Cursor Effect */}
+                    <pre className="whitespace-pre-wrap text-green-400/80">
+                      {displayedText}
+                      {isTyping && <span className="inline-block w-2 H-4 bg-green-500 animate-pulse ml-1">_</span>}
+                    </pre>
+                  </div>
                 </div>
               )}
             </div>
