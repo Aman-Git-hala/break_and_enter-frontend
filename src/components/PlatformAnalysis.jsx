@@ -7,7 +7,8 @@ import {
 } from "chart.js";
 import {
   ArrowLeft, CheckCircle2, Award, User, Mail, Phone, GraduationCap,
-  Linkedin, Briefcase, Loader2, Github, BrainCircuit, ShieldCheck, Lock, Code
+  Linkedin, Briefcase, Loader2, Github, BrainCircuit, ShieldCheck, Lock, Code,
+  FileText, ChevronDown, ChevronUp, Copy
 } from "lucide-react";
 import { API_URL } from "../config"; // <--- 1. IMPORT CONFIG
 
@@ -35,6 +36,7 @@ export default function PlatformAnalysis() {
   const [showIntro, setShowIntro] = useState(true);
   const [progressStep, setProgressStep] = useState(0);
   const [revealContent, setRevealContent] = useState(false);
+  const [showResume, setShowResume] = useState(false);
 
   // 1. Redirect if no profile data (prevent crash on refresh)
   useEffect(() => {
@@ -213,6 +215,41 @@ export default function PlatformAnalysis() {
             </div>
           </div>
 
+
+
+          {/* Resume Raw Text (Collapsible) */}
+          {profile.raw_text && (
+            <div className="bg-slate-900/50 border border-white/10 rounded-2xl overflow-hidden transition-all duration-300">
+              <button
+                onClick={() => setShowResume(!showResume)}
+                className="w-full flex items-center justify-between p-4 hover:bg-white/5 transition text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400">
+                    <FileText size={20} />
+                  </div>
+                  <span className="font-semibold text-gray-200">Parsed Resume Content</span>
+                </div>
+                {showResume ? <ChevronUp className="text-gray-400" /> : <ChevronDown className="text-gray-400" />}
+              </button>
+
+              {showResume && (
+                <div className="p-6 border-t border-white/10 bg-[#0a0a0a] relative group">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(profile.raw_text); }}
+                    className="absolute top-4 right-4 p-2 bg-white/10 rounded-lg hover:bg-white/20 transition opacity-0 group-hover:opacity-100"
+                    title="Copy Text"
+                  >
+                    <Copy size={16} className="text-gray-300" />
+                  </button>
+                  <pre className="whitespace-pre-wrap text-sm text-green-400/80 font-mono leading-relaxed max-h-96 overflow-y-auto custom-scrollbar">
+                    {profile.raw_text}
+                  </pre>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Github Analysis */}
           <div>
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2"><Github className="text-white" /> GitHub Analysis</h2>
@@ -314,12 +351,13 @@ export default function PlatformAnalysis() {
 
           </div>
         </div>
-      </div>
+      </div >
 
       {selectedSkill && aiResults && (
         <SkillModal skill={selectedSkill} data={aiResults[selectedSkill]} onClose={() => setSelectedSkill(null)} />
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 }
 
