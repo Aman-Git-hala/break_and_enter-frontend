@@ -36,7 +36,7 @@ export default function PlatformAnalysis() {
   const [showIntro, setShowIntro] = useState(true);
   const [progressStep, setProgressStep] = useState(0);
   const [revealContent, setRevealContent] = useState(false);
-  const [showResume, setShowResume] = useState(false);
+  const [showResume, setShowResume] = useState(true);
 
   // Typewriter effect state
   const [displayedText, setDisplayedText] = useState("");
